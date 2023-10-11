@@ -9,8 +9,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -263,68 +265,71 @@ public class SellGUI {
     public double getPrice(ItemStack itemStack) {
         double price = 0.0D;
         if (CustomItemsCommand.getPrice(itemStack) != -1.0D) {
-            return CustomItemsCommand.getPrice(itemStack);
+            price = CustomItemsCommand.getPrice(itemStack);
         }
-
-        if (this.main.getConfig().getBoolean("prevent-custom-item-selling") && itemStack.hasItemMeta()) {
-            return 0.00;
-        }
-        if (this.main.hasEssentials() && main.getConfig().getBoolean("use-essentials-price")) {
-            if (main.getEssentialsHolder().getEssentials() != null) {
-                if (main.getConfig().getBoolean("use-permission-bonuses-on-essentials")) {
-                    double temp = round(main.getEssentialsHolder().getPrice(itemStack).doubleValue(), main.getConfig().getInt("places-to-round"));
-                    for (PermissionAttachmentInfo pai : player.getEffectivePermissions()) {
-                        if (pai.getPermission().contains("sellgui.bonus.") && pai.getValue()) {
-                            if (temp != 0) {
-                                temp += Double.parseDouble(pai.getPermission().replaceAll("sellgui.bonus.", ""));
+        else {
+            if (this.main.getConfig().getBoolean("prevent-custom-item-selling") && itemStack.hasItemMeta()) {
+                return 0.00;
+            }
+            if (this.main.hasEssentials() && main.getConfig().getBoolean("use-essentials-price")) {
+                if (main.getEssentialsHolder().getEssentials() != null) {
+                    if (main.getConfig().getBoolean("use-permission-bonuses-on-essentials")) {
+                        double temp = round(main.getEssentialsHolder().getPrice(itemStack).doubleValue(), main.getConfig().getInt("places-to-round"));
+                        for (PermissionAttachmentInfo pai : player.getEffectivePermissions()) {
+                            if (pai.getPermission().contains("sellgui.bonus.") && pai.getValue()) {
+                                if (temp != 0) {
+                                    temp += Double.parseDouble(pai.getPermission().replaceAll("sellgui.bonus.", ""));
+                                }
+                            } else if (pai.getPermission().contains("sellgui.multiplier.") && pai.getValue()) {
+                                temp *= Double.parseDouble(pai.getPermission().replaceAll("sellgui.multiplier.", ""));
                             }
-                        } else if (pai.getPermission().contains("sellgui.multiplier.") && pai.getValue()) {
-                            temp *= Double.parseDouble(pai.getPermission().replaceAll("sellgui.multiplier.", ""));
                         }
-                    }
-                    if (main.getConfig().getBoolean("round-places")) {
-                        return round(temp, main.getConfig().getInt("places-to-round"));
+                        if (main.getConfig().getBoolean("round-places")) {
+                            return round(temp, main.getConfig().getInt("places-to-round"));
+                        } else {
+                            return temp;
+                        }
                     } else {
-                        return temp;
+                        return round(main.getEssentialsHolder().getPrice(itemStack).doubleValue(), main.getConfig().getInt("places-to-round"));
                     }
-                } else {
-                    return round(main.getEssentialsHolder().getPrice(itemStack).doubleValue(), main.getConfig().getInt("places-to-round"));
+                }
+            }
+
+            ArrayList<String> flatBonus = new ArrayList<>();
+            if (this.main.getItemPricesConfig().getStringList("flat-enchantment-bonus") != null)
+                for (String s : this.main.getItemPricesConfig().getStringList("flat-enchantment-bonus")) {
+                    flatBonus.add(s);
+                }
+            ArrayList<String> multiplierBonus = new ArrayList<>();
+            if (this.main.getItemPricesConfig().getStringList("multiplier-enchantment-bonus") != null)
+                for (String s : this.main.getItemPricesConfig().getStringList("multiplier-enchantment-bonus")) {
+                    multiplierBonus.add(s);
+                }
+            if (itemStack != null && !(itemStack.getType().isAir()) &&
+                    this.main.getItemPricesConfig().contains(itemStack.getType().name())) {
+                price = this.main.getItemPricesConfig().getDouble(itemStack.getType().name());
+            }
+            if (itemStack != null && itemStack.getItemMeta().hasEnchants()) {
+                for (Enchantment enchantment : itemStack.getItemMeta().getEnchants().keySet()) {
+                    for (String s : flatBonus) {
+                        String[] temp = s.split(":");
+                        if (temp[0].equalsIgnoreCase(enchantment.getKey().getKey()) && temp[1]
+                                .equalsIgnoreCase(itemStack.getEnchantmentLevel(enchantment) + ""))
+                            price += Double.parseDouble(temp[2]);
+                    }
+                }
+                for (Enchantment enchantment : itemStack.getItemMeta().getEnchants().keySet()) {
+                    for (String s : multiplierBonus) {
+                        String[] temp2 = s.split(":");
+                        if (temp2[0].equalsIgnoreCase(enchantment.getKey().getKey()) && temp2[1]
+                                .equalsIgnoreCase(itemStack.getEnchantmentLevel(enchantment) + ""))
+                            price *= Double.parseDouble(temp2[2]);
+                    }
                 }
             }
         }
 
-        ArrayList<String> flatBonus = new ArrayList<>();
-        if (this.main.getItemPricesConfig().getStringList("flat-enchantment-bonus") != null)
-            for (String s : this.main.getItemPricesConfig().getStringList("flat-enchantment-bonus")) {
-                flatBonus.add(s);
-            }
-        ArrayList<String> multiplierBonus = new ArrayList<>();
-        if (this.main.getItemPricesConfig().getStringList("multiplier-enchantment-bonus") != null)
-            for (String s : this.main.getItemPricesConfig().getStringList("multiplier-enchantment-bonus")) {
-                multiplierBonus.add(s);
-            }
-        if (itemStack != null && !(itemStack.getType().isAir()) &&
-                this.main.getItemPricesConfig().contains(itemStack.getType().name())) {
-            price = this.main.getItemPricesConfig().getDouble(itemStack.getType().name());
-        }
-        if (itemStack != null && itemStack.getItemMeta().hasEnchants()) {
-            for (Enchantment enchantment : itemStack.getItemMeta().getEnchants().keySet()) {
-                for (String s : flatBonus) {
-                    String[] temp = s.split(":");
-                    if (temp[0].equalsIgnoreCase(enchantment.getKey().getKey()) && temp[1]
-                            .equalsIgnoreCase(itemStack.getEnchantmentLevel(enchantment) + ""))
-                        price += Double.parseDouble(temp[2]);
-                }
-            }
-            for (Enchantment enchantment : itemStack.getItemMeta().getEnchants().keySet()) {
-                for (String s : multiplierBonus) {
-                    String[] temp2 = s.split(":");
-                    if (temp2[0].equalsIgnoreCase(enchantment.getKey().getKey()) && temp2[1]
-                            .equalsIgnoreCase(itemStack.getEnchantmentLevel(enchantment) + ""))
-                        price *= Double.parseDouble(temp2[2]);
-                }
-            }
-        }
+
         for (PermissionAttachmentInfo pai : player.getEffectivePermissions()) {
             if (pai.getPermission().contains("sellgui.bonus.") && pai.getValue()) {
                 if (price != 0) {
@@ -371,9 +376,11 @@ public class SellGUI {
 
     }
 
+    private final DecimalFormat decimalFormat = new DecimalFormat("#,###");
+
     public void sellItems(Inventory inventory) {
         this.main.getEcon().depositPlayer((OfflinePlayer) this.player, getTotal(inventory));
-        this.player.sendMessage(color(this.main.getLangConfig().getString("sold-message").replaceAll("%total%", getTotal(inventory) + "")));
+        this.player.sendMessage(color(this.main.getLangConfig().getString("sold-message").replaceAll("%total%", decimalFormat.format(getTotal(inventory)))));
         for (ItemStack itemStack : inventory.getContents()) {
             if (itemStack != null && !InventoryListeners.sellGUIItem(itemStack, this.player)) {
                 if (getPrice(itemStack) != 0D) {
