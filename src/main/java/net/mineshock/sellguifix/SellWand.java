@@ -1,5 +1,6 @@
 package net.mineshock.sellguifix;
 
+import com.bgsoftware.superiorskyblock.api.SuperiorSkyblockAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -55,6 +56,8 @@ public class SellWand implements Listener {
         if (event.getPlayer().getItemInHand().getType() != Material.STICK) { return; }
 
         if (!event.getPlayer().getItemInHand().getItemMeta().getPersistentDataContainer().has(this.wandKey, PersistentDataType.DOUBLE)) { return; }
+
+        if (!SuperiorSkyblockAPI.getPlayer(event.getPlayer()).isInsideIsland()) { return; }
 
         event.setCancelled(true);
 
