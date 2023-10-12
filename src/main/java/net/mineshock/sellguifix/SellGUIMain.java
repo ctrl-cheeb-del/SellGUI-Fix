@@ -8,12 +8,15 @@ import net.mineshock.sellguifix.listeners.SignListener;
 import net.mineshock.sellguifix.listeners.UpdateWarning;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -21,6 +24,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 public class SellGUIMain extends JavaPlugin {
     private static Economy econ;
@@ -46,16 +50,24 @@ public class SellGUIMain extends JavaPlugin {
     private File log;
 
     private SellCommand sellCommand;
+    private SellWand sellWand;
 
     private FileConfiguration logConfiguration;
+    public NamespacedKey key = new NamespacedKey(this, getDescription().getName());
 
     public void onEnable() {
+        registerGlow();
         registerConfig();
         createConfigs();
         createPrices();
-        getServer().getPluginManager().registerEvents((Listener) new InventoryListeners(this), (Plugin) this);
-        getServer().getPluginManager().registerEvents((Listener) new SignListener(this), (Plugin) this);
+        PluginManager manager = getServer().getPluginManager();
+
+        manager.registerEvents(new InventoryListeners(this), this);
+        manager.registerEvents(new SignListener(this), this);
+        manager.registerEvents(new SellWand(this), this);
+
         this.sellCommand = new SellCommand(this);
+        this.sellWand = new SellWand(this);
         getCommand("sellgui").setExecutor(sellCommand);
         getCommand("customitems").setExecutor(new CustomItemsCommand(this));
         getCommand("sellall").setExecutor(new SellAllCommand(this));
@@ -73,6 +85,28 @@ public class SellGUIMain extends JavaPlugin {
     }
 
     public void onDisable() {
+    }
+
+    public void registerGlow() {
+        try {
+            Field f = Enchantment.class.getDeclaredField("acceptingNew");
+            f.setAccessible(true);
+            f.set(null, true);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            key = new NamespacedKey(this, getDescription().getName());
+
+            Glow glow = new Glow(key);
+            Enchantment.registerEnchantment(glow);
+        }
+        catch (IllegalArgumentException e){
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void saveCustom() {
@@ -148,6 +182,10 @@ public class SellGUIMain extends JavaPlugin {
     public SellCommand getSellCommand() {
         return sellCommand;
     }
+
+    public SellAllCommand getSellALlCommand() { return new SellAllCommand(this); }
+
+    public SellWand getSellWand() { return sellWand; }
 
     public SellGUIMain getMain() {
         return this;

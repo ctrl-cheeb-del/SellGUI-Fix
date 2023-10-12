@@ -2,6 +2,8 @@ package net.mineshock.sellguifix.commands;
 
 import net.mineshock.sellguifix.SellGUIMain;
 import net.mineshock.sellguifix.SellGUI;
+import net.mineshock.sellguifix.SellWand;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -30,7 +32,58 @@ public class SellCommand implements CommandExecutor {
             sellGUIS.add(new SellGUI(this.main, this.main.getServer().getPlayer(strings[0])));
             return true;
         }
+
+        if (!(commandSender instanceof Player)) {
+            if (strings.length != 2 && "sellwand".equals(strings[1])) {
+                return true;
+            }
+
+            Player playerTarget = Bukkit.getPlayer(strings[0]);
+            if (playerTarget == null) {
+                commandSender.sendMessage("Invalid player!");
+                return true;
+            }
+
+            double multiplier = 1;
+
+            try {
+                multiplier = Double.parseDouble(strings[1]);
+            } catch (NumberFormatException e) {
+                commandSender.sendMessage("Usage: /sellgui sellwand <player> <multipler>");
+                return true;
+            }
+
+            playerTarget.getInventory().addItem(main.getSellWand().create(multiplier));
+            return true;
+        }
+
         Player player = (Player) commandSender;
+
+            if (strings.length == 3 && "sellwand".equals(strings[0])) {
+
+                player.hasPermission("sellgui.wand");
+
+                Player playerTarget = Bukkit.getPlayer(strings[1]);
+                if (playerTarget == null) {
+                    player.sendMessage("Invalid player!");
+                    return true;
+                }
+
+                double multiplier;
+
+                try {
+                    multiplier = Double.parseDouble(strings[2]);
+                } catch (NumberFormatException e) {
+                    player.sendMessage("Usage: /sellgui sellwand <player> <multipler>");
+                    return true;
+                }
+
+                playerTarget.getInventory().addItem(main.getSellWand().create(multiplier));
+                return true;
+            }
+
+
+
         if (strings.length == 0 && player.hasPermission("sellgui.use")) {
             sellGUIS.add(new SellGUI(this.main, player));
             return true;
