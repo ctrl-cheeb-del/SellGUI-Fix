@@ -13,17 +13,7 @@ This is just a project to publish a fix for newer version if anyone else needed 
 Depends on the [Spigot API](https://www.spigotmc.org/) and [Vault API](https://github.com/MilkBowl/VaultAPI) for core functionality.
 Has integrations with EssentialsX for pricing.
 
-# Features (From Original SellGUI)
-* Custom Item Support
-* Item Meta blocking
-* Essentials Pricing
-* Customizable Messages and Messages
-* Custom Pricing
-* Transaction Logging in spreadsheet importable format
-* Enchantment pricing
-* Configurable Menu Behavior
-* Configurable Menu Sizes
-* /SellAll for the player's inventory
-* Update Checker
-* Sign Menu feature
-* Reload Commands
+# Added Features
+* Multipliers now work with custom items
+* Sellall command now correctly calculates all items
+* Changed how large numbers are formatted, now without exponents
