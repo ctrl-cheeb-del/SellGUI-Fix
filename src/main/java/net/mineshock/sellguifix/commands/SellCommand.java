@@ -34,11 +34,11 @@ public class SellCommand implements CommandExecutor {
         }
 
         if (!(commandSender instanceof Player)) {
-            if (strings.length != 2 && "sellwand".equals(strings[1])) {
+            if (strings.length != 3 && "sellwand".equals(strings[0])) {
                 return true;
             }
 
-            Player playerTarget = Bukkit.getPlayer(strings[0]);
+            Player playerTarget = Bukkit.getPlayer(strings[1]);
             if (playerTarget == null) {
                 commandSender.sendMessage("Invalid player!");
                 return true;
@@ -47,7 +47,7 @@ public class SellCommand implements CommandExecutor {
             double multiplier = 1;
 
             try {
-                multiplier = Double.parseDouble(strings[1]);
+                multiplier = Double.parseDouble(strings[2]);
             } catch (NumberFormatException e) {
                 commandSender.sendMessage("Usage: /sellgui sellwand <player> <multipler>");
                 return true;

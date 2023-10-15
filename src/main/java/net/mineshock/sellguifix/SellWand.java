@@ -10,15 +10,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
+
 
 public class SellWand implements Listener {
 
@@ -37,7 +41,7 @@ public class SellWand implements Listener {
         ItemStack stack = new ItemStack(Material.STICK);
         ItemMeta meta = stack.getItemMeta();
 
-        meta.setDisplayName(ChatColor.GOLD + "Sell Wand");
+        meta.setDisplayName(ChatColor.GOLD + "§lSell Wand");
         meta.setLore(List.of("",ChatColor.GRAY + "| Multiplier: x" + multiplier, ChatColor.GRAY + "| Right-click a chest to sell its contents"));
         meta.addEnchant(new Glow(main.key), 1, true);
 
@@ -66,7 +70,14 @@ public class SellWand implements Listener {
 
         double multiplier = event.getPlayer().getItemInHand().getItemMeta().getPersistentDataContainer().get(this.wandKey, PersistentDataType.DOUBLE);
 
-        double price = multiplier * main.getSellALlCommand().getTotal(inventory, event.getPlayer());
+        double total = 0.0D;
+        for (ItemStack itemStack : inventory.getContents()) {
+            if (itemStack != null)
+                total += main.getSellALlCommand().getPrice(itemStack, event.getPlayer()) * itemStack.getAmount();
+        }
+
+        double price = multiplier * total;
+
 
         if (!confirmMap.containsKey(event.getPlayer())) {
             event.getPlayer().sendMessage(ChatColor.GREEN + "Chest value: $" + price + ". Right-click to confirm sell.");
@@ -93,10 +104,7 @@ public class SellWand implements Listener {
 
             }
         }
-
-
-        //ask to confirm (give player metadata)
-        //on click, if same chest and has metadata - sell
     }
+
 
 }

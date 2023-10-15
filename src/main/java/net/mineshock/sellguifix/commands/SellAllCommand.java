@@ -11,6 +11,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.math.BigDecimal;
@@ -33,7 +34,14 @@ public class SellAllCommand implements CommandExecutor {
         }
         Player player = (Player) sender;
         if (args.length == 1 && args[0].equalsIgnoreCase("confirm")) {
-            sellItems(player.getInventory(), player);
+            PlayerInventory inventory = player.getInventory();
+            if (inventory.getItemInOffHand().getType() != Material.AIR) {
+                if (getPrice(inventory.getItemInOffHand(), player) != 0.0D) {
+                    player.sendMessage(ChatColor.RED + "Please remove all sellable items from your offhand!");
+                    return true;
+                }
+            }
+            sellItems(inventory, player);
         } else {
             player.sendMessage(color(main.getLangConfig().getString("sellall-confirm-message")));
         }
@@ -108,12 +116,12 @@ public class SellAllCommand implements CommandExecutor {
 
     private final DecimalFormat decimalFormat = new DecimalFormat("#,###");
 
-    public void sellItems(Inventory inventory, Player player) {
+    public void sellItems(PlayerInventory inventory, Player player) {
         this.main.getEcon().depositPlayer((OfflinePlayer) player, getTotal(inventory, player));
         player.sendMessage(color(this.main.getLangConfig().getString("sold-message").replaceAll("%total%", decimalFormat.format(round(getTotal(inventory, player),3)))));
         for (ItemStack itemStack : inventory) {
             if (itemStack != null && getPrice(itemStack, player) != 0.0D) {
-                inventory.remove(itemStack);
+                inventory.removeItem(itemStack);
             }
         }
     }
