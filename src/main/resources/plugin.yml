@@ -1,6 +1,6 @@
-name: sellgui-fix
+name: sellgui
 version: '${project.version}'
-main: net.mineshock.sellguifix.SellGUIMain
+main: net.mineshock.sellgui.SellGUIMain
 api-version: '1.20'
 author: cheeb
 depend: [Vault]
