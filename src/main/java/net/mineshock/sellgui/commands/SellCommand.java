@@ -1,8 +1,7 @@
-package net.mineshock.sellguifix.commands;
+package net.mineshock.sellgui.commands;
 
-import net.mineshock.sellguifix.SellGUIMain;
-import net.mineshock.sellguifix.SellGUI;
-import net.mineshock.sellguifix.SellWand;
+import net.mineshock.sellgui.SellGUIMain;
+import net.mineshock.sellgui.SellGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -59,28 +58,52 @@ public class SellCommand implements CommandExecutor {
 
         Player player = (Player) commandSender;
 
-            if (strings.length == 3 && "sellwand".equals(strings[0])) {
+        if (strings.length == 3 && "sellwand".equals(strings[0])) {
 
-                player.hasPermission("sellgui.wand");
+            if (!player.hasPermission("sellgui.wand")) { return false; }
 
-                Player playerTarget = Bukkit.getPlayer(strings[1]);
-                if (playerTarget == null) {
-                    player.sendMessage("Invalid player!");
-                    return true;
-                }
-
-                double multiplier;
-
-                try {
-                    multiplier = Double.parseDouble(strings[2]);
-                } catch (NumberFormatException e) {
-                    player.sendMessage("Usage: /sellgui sellwand <player> <multipler>");
-                    return true;
-                }
-
-                playerTarget.getInventory().addItem(main.getSellWand().create(multiplier));
+            Player playerTarget = Bukkit.getPlayer(strings[1]);
+            if (playerTarget == null) {
+                player.sendMessage("Invalid player!");
                 return true;
             }
+
+            double multiplier;
+
+            try {
+                multiplier = Double.parseDouble(strings[2]);
+            } catch (NumberFormatException e) {
+                player.sendMessage("Usage: /sellgui sellwand <player> <multipler>");
+                return true;
+            }
+
+            playerTarget.getInventory().addItem(main.getSellWand().create(multiplier));
+            return true;
+        }
+
+        if (strings.length == 3 && "sellchest".equals(strings[0])) {
+
+            if (!player.hasPermission("sellgui.chest")) { return false; }
+
+            Player playerTarget = Bukkit.getPlayer(strings[1]);
+            if (playerTarget == null) {
+                player.sendMessage("Invalid player!");
+                return true;
+            }
+
+            double multiplier;
+
+            try {
+                multiplier = Double.parseDouble(strings[2]);
+            } catch (NumberFormatException e) {
+                player.sendMessage("Usage: /sellgui sellchest <player> <multipler>");
+                return true;
+            }
+
+            playerTarget.getInventory().addItem(main.getSellChestManager().create(multiplier));
+            return true;
+        }
+
 
 
 

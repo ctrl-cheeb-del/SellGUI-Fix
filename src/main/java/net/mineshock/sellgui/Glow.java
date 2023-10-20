@@ -1,4 +1,4 @@
-package net.mineshock.sellguifix;
+package net.mineshock.sellgui;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;

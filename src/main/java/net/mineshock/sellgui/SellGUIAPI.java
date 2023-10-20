@@ -1,6 +1,6 @@
-package net.mineshock.sellguifix;
+package net.mineshock.sellgui;
 
-import net.mineshock.sellguifix.commands.CustomItemsCommand;
+import net.mineshock.sellgui.commands.CustomItemsCommand;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;

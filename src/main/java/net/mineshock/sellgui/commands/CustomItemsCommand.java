@@ -1,6 +1,6 @@
-package net.mineshock.sellguifix.commands;
+package net.mineshock.sellgui.commands;
 
-import net.mineshock.sellguifix.SellGUIMain;
+import net.mineshock.sellgui.SellGUIMain;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

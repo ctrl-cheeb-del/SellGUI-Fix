@@ -1,8 +1,7 @@
-package net.mineshock.sellguifix;
+package net.mineshock.sellgui;
 
 import com.bgsoftware.superiorskyblock.api.SuperiorSkyblockAPI;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Chest;
@@ -10,16 +9,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.FurnaceBurnEvent;
+import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 
@@ -102,6 +100,54 @@ public class SellWand implements Listener {
                 event.getPlayer().sendMessage(ChatColor.GREEN + "Chest value: $" + price + ". Right-click to confirm sell.");
                 confirmMap.replace(event.getPlayer(), chest);
 
+            }
+        }
+    }
+
+    @EventHandler
+    public void onCraft(PrepareItemCraftEvent event) {
+        boolean hasMetaData = false;
+
+        for (ItemStack ingredient : event.getInventory().getMatrix()) {
+            if (ingredient == null || ingredient.getItemMeta() == null) { continue; }
+
+            if (ingredient.getItemMeta().getPersistentDataContainer().has(this.wandKey, PersistentDataType.DOUBLE) || ingredient.getItemMeta().getPersistentDataContainer().has(this.wandKey, PersistentDataType.DOUBLE)) {
+                hasMetaData = true;
+                break;
+            }
+        }
+
+        if (hasMetaData) {
+            event.getInventory().setResult(null);
+        }
+    }
+
+    @EventHandler
+    public void onAnvilPrepare(PrepareAnvilEvent event) {
+
+        ItemStack firstInput = event.getInventory().getItem(0);
+        ItemStack secondInput = event.getInventory().getItem(1);
+
+        if (firstInput != null && firstInput.getItemMeta() != null) {
+            if (firstInput.getItemMeta().getPersistentDataContainer().has(this.wandKey, PersistentDataType.DOUBLE)) {
+                event.setResult(null);
+            }
+        }
+
+        if (secondInput != null && secondInput.getItemMeta() != null) {
+            if (secondInput.getItemMeta().getPersistentDataContainer().has(this.wandKey, PersistentDataType.DOUBLE)) {
+                event.setResult(null);
+            }
+        }
+
+    }
+
+    @EventHandler
+    public void onSmelt(FurnaceBurnEvent event) {
+        ItemStack fuel = event.getFuel();
+        if (fuel.getItemMeta() != null) {
+            if (fuel.getItemMeta().getPersistentDataContainer().has(this.wandKey, PersistentDataType.DOUBLE)) {
+                event.setCancelled(true);
             }
         }
     }

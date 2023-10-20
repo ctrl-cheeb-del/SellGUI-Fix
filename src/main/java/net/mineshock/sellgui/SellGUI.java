@@ -1,8 +1,8 @@
-package net.mineshock.sellguifix;
+package net.mineshock.sellgui;
 
-import net.mineshock.sellguifix.commands.CustomItemsCommand;
-import net.mineshock.sellguifix.commands.SellCommand;
-import net.mineshock.sellguifix.listeners.InventoryListeners;
+import net.mineshock.sellgui.commands.CustomItemsCommand;
+import net.mineshock.sellgui.commands.SellCommand;
+import net.mineshock.sellgui.listeners.InventoryListeners;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -12,7 +12,6 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 

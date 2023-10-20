@@ -1,11 +1,12 @@
-package net.mineshock.sellguifix;
+package net.mineshock.sellgui;
 
-import net.mineshock.sellguifix.commands.CustomItemsCommand;
-import net.mineshock.sellguifix.commands.SellAllCommand;
-import net.mineshock.sellguifix.commands.SellCommand;
-import net.mineshock.sellguifix.listeners.InventoryListeners;
-import net.mineshock.sellguifix.listeners.SignListener;
-import net.mineshock.sellguifix.listeners.UpdateWarning;
+import net.mineshock.sellgui.commands.CustomItemsCommand;
+import net.mineshock.sellgui.commands.SellAllCommand;
+import net.mineshock.sellgui.commands.SellChestManager;
+import net.mineshock.sellgui.commands.SellCommand;
+import net.mineshock.sellgui.listeners.InventoryListeners;
+import net.mineshock.sellgui.listeners.SignListener;
+import net.mineshock.sellgui.listeners.UpdateWarning;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -25,6 +26,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class SellGUIMain extends JavaPlugin {
     private static Economy econ;
@@ -51,9 +54,12 @@ public class SellGUIMain extends JavaPlugin {
 
     private SellCommand sellCommand;
     private SellWand sellWand;
+    private SellChestManager sellChestManager;
 
     private FileConfiguration logConfiguration;
     public NamespacedKey key = new NamespacedKey(this, getDescription().getName());
+
+    public static Connection dbConnection;
 
     public void onEnable() {
         registerGlow();
@@ -65,9 +71,11 @@ public class SellGUIMain extends JavaPlugin {
         manager.registerEvents(new InventoryListeners(this), this);
         manager.registerEvents(new SignListener(this), this);
         manager.registerEvents(new SellWand(this), this);
+        manager.registerEvents(new SellChestManager(this), this);
 
         this.sellCommand = new SellCommand(this);
         this.sellWand = new SellWand(this);
+        this.sellChestManager = new SellChestManager(this);
         getCommand("sellgui").setExecutor(sellCommand);
         getCommand("customitems").setExecutor(new CustomItemsCommand(this));
         getCommand("sellall").setExecutor(new SellAllCommand(this));
@@ -81,10 +89,35 @@ public class SellGUIMain extends JavaPlugin {
                 getServer().getPluginManager().registerEvents((Listener) new UpdateWarning(this), (Plugin) this);
             }
         });
-        //customMenuItemsConfig;
+
+
+        try {
+            dbConnection = SQLManager.Connect();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        SQLManager.createTable("sell_chests", new String[]{
+                "id INT AUTO_INCREMENT PRIMARY KEY",
+                "player_id VARCHAR(255)",
+                "x INT",
+                "y INT",
+                "z INT",
+                "world VARCHAR(255)",
+                "multiplier DOUBLE"
+        });
+
+        sellChestManager.loadSellChests();
     }
 
     public void onDisable() {
+        if (dbConnection != null) {
+            try {
+                dbConnection.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public void registerGlow() {
@@ -186,6 +219,8 @@ public class SellGUIMain extends JavaPlugin {
     public SellAllCommand getSellALlCommand() { return new SellAllCommand(this); }
 
     public SellWand getSellWand() { return sellWand; }
+
+    public SellChestManager getSellChestManager() { return sellChestManager; }
 
     public SellGUIMain getMain() {
         return this;

@@ -1,6 +1,6 @@
-package net.mineshock.sellguifix.listeners;
+package net.mineshock.sellgui.listeners;
 
-import net.mineshock.sellguifix.SellGUIMain;
+import net.mineshock.sellgui.SellGUIMain;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

@@ -1,8 +1,8 @@
-package net.mineshock.sellguifix.listeners;
+package net.mineshock.sellgui.listeners;
 
-import net.mineshock.sellguifix.SellGUI;
-import net.mineshock.sellguifix.SellGUIMain;
-import net.mineshock.sellguifix.commands.SellCommand;
+import net.mineshock.sellgui.SellGUI;
+import net.mineshock.sellgui.SellGUIMain;
+import net.mineshock.sellgui.commands.SellCommand;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;

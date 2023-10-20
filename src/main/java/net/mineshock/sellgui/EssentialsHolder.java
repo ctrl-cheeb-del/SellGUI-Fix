@@ -1,4 +1,4 @@
-package net.mineshock.sellguifix;
+package net.mineshock.sellgui;
 
 import com.earth2me.essentials.Essentials;
 import org.bukkit.Bukkit;

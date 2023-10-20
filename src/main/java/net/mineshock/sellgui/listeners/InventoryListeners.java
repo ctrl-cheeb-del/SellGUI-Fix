@@ -1,9 +1,9 @@
-package net.mineshock.sellguifix.listeners;
+package net.mineshock.sellgui.listeners;
 
-import net.mineshock.sellguifix.SellGUI;
-import net.mineshock.sellguifix.SellGUIMain;
-import net.mineshock.sellguifix.commands.CustomItemsCommand;
-import net.mineshock.sellguifix.commands.SellCommand;
+import net.mineshock.sellgui.SellGUI;
+import net.mineshock.sellgui.SellGUIMain;
+import net.mineshock.sellgui.commands.CustomItemsCommand;
+import net.mineshock.sellgui.commands.SellCommand;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
