@@ -15,11 +15,15 @@ import java.util.ArrayList;
 public class SellGUIAPI {
 
     private SellGUIMain main;
+    private static SellGUIAPI instance;
 
     public SellGUIAPI(SellGUIMain main) {
         this.main = main;
+        instance = this;
     }
 
     public PriceCalculator getPriceCalculator() { return main.getPriceCalculator(); }
+
+    public static SellGUIAPI getInstance() { return instance; }
 
 }
