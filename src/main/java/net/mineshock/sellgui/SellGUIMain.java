@@ -28,6 +28,9 @@ import java.lang.reflect.Field;
 import java.sql.Connection;
 
 public class SellGUIMain extends JavaPlugin {
+
+    private static SellGUIMain main;
+
     private static Economy econ;
 
     private ConsoleCommandSender console = getServer().getConsoleSender();
@@ -60,6 +63,8 @@ public class SellGUIMain extends JavaPlugin {
     public static Connection dbConnection;
 
     public void onEnable() {
+        main = this;
+
         registerGlow();
         registerConfig();
         createConfigs();
@@ -193,8 +198,8 @@ public class SellGUIMain extends JavaPlugin {
 
     public PriceCalculator getPriceCalculator() { return priceCalculator; }
 
-    public SellGUIMain getMain() {
-        return this;
+    public static SellGUIMain getMain() {
+        return main;
     }
 
     public ConsoleCommandSender getConsole() {
