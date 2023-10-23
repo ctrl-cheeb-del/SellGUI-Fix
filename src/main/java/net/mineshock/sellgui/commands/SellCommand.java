@@ -81,32 +81,6 @@ public class SellCommand implements CommandExecutor {
             return true;
         }
 
-        if (strings.length == 3 && "sellchest".equals(strings[0])) {
-
-            if (!player.hasPermission("sellgui.chest")) { return false; }
-
-            Player playerTarget = Bukkit.getPlayer(strings[1]);
-            if (playerTarget == null) {
-                player.sendMessage("Invalid player!");
-                return true;
-            }
-
-            double multiplier;
-
-            try {
-                multiplier = Double.parseDouble(strings[2]);
-            } catch (NumberFormatException e) {
-                player.sendMessage("Usage: /sellgui sellchest <player> <multipler>");
-                return true;
-            }
-
-            playerTarget.getInventory().addItem(main.getSellChestManager().create(multiplier));
-            return true;
-        }
-
-
-
-
         if (strings.length == 0 && player.hasPermission("sellgui.use")) {
             sellGUIS.add(new SellGUI(this.main, player));
             return true;
