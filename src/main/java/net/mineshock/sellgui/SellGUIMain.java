@@ -52,6 +52,7 @@ public class SellGUIMain extends JavaPlugin {
 
     private SellCommand sellCommand;
     private SellWand sellWand;
+    private PriceCalculator priceCalculator;
 
     private FileConfiguration logConfiguration;
     public NamespacedKey key = new NamespacedKey(this, getDescription().getName());
@@ -71,6 +72,7 @@ public class SellGUIMain extends JavaPlugin {
 
         this.sellCommand = new SellCommand(this);
         this.sellWand = new SellWand(this);
+        this.priceCalculator = new PriceCalculator(this);
         getCommand("sellgui").setExecutor(sellCommand);
         getCommand("customitems").setExecutor(new CustomItemsCommand(this));
         getCommand("sellall").setExecutor(new SellAllCommand(this));
@@ -188,6 +190,8 @@ public class SellGUIMain extends JavaPlugin {
     public SellAllCommand getSellALlCommand() { return new SellAllCommand(this); }
 
     public SellWand getSellWand() { return sellWand; }
+
+    public PriceCalculator getPriceCalculator() { return priceCalculator; }
 
     public SellGUIMain getMain() {
         return this;
