@@ -14,10 +14,14 @@ import java.util.ArrayList;
 public class PriceCalculator {
 
     private final SellGUIMain main;
+    private static PriceCalculator priceCalculator;
 
     public PriceCalculator(SellGUIMain main) {
         this.main = main;
+        priceCalculator = this;
     }
+
+    public static PriceCalculator getPriceCalculator() { return priceCalculator; }
 
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
