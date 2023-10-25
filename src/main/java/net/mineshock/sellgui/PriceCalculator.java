@@ -13,17 +13,10 @@ import java.util.ArrayList;
 
 public class PriceCalculator {
 
-    private static SellGUIMain main;
-    private static PriceCalculator priceCalculator;
+    private final SellGUIMain main;
 
     public PriceCalculator(SellGUIMain main) {
         this.main = main;
-    }
-
-
-    public static SellGUIMain getMain() {
-
-        return main;
     }
 
     public static double round(double value, int places) {
