@@ -7,6 +7,7 @@ import net.mineshock.sellgui.listeners.InventoryListeners;
 import net.mineshock.sellgui.listeners.SignListener;
 import net.mineshock.sellgui.listeners.UpdateWarning;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.ConsoleCommandSender;
@@ -195,8 +196,8 @@ public class SellGUIMain extends JavaPlugin {
 
     public PriceCalculator getPriceCalculator() { return priceCalculator; }
 
-    public SellGUIMain getMain() {
-        return this;
+    public static SellGUIMain getMain() {
+        return JavaPlugin.getPlugin(SellGUIMain.class);
     }
 
     public ConsoleCommandSender getConsole() {
