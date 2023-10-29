@@ -19,6 +19,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.BufferedWriter;
@@ -72,6 +73,8 @@ public class SellGUIMain extends JavaPlugin {
         manager.registerEvents(new InventoryListeners(this), this);
         manager.registerEvents(new SignListener(this), this);
         manager.registerEvents(new SellWand(this), this);
+
+        Bukkit.getServicesManager().register(PriceCalculator.class, new PriceCalculator(this), this, ServicePriority.Normal);
 
         this.sellCommand = new SellCommand(this);
         this.sellWand = new SellWand(this);
