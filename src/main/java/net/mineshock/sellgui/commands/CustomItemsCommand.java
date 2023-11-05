@@ -71,12 +71,8 @@ public class CustomItemsCommand implements CommandExecutor {
         }
         customItems.clear();
         prices.clear();
-        for (ItemStack itemStack : (ArrayList<ItemStack>) main.getCustomItemsConfig().getList("items")) {
-            customItems.add(itemStack);
-        }
-        for (Double dubs : (ArrayList<Double>) main.getCustomItemsConfig().getList("prices")) {
-            prices.add(dubs);
-        }
+        customItems.addAll((ArrayList<ItemStack>) main.getCustomItemsConfig().getList("items"));
+        prices.addAll((ArrayList<Double>) main.getCustomItemsConfig().getList("prices"));
     }
 
     private void makeMenu() {
